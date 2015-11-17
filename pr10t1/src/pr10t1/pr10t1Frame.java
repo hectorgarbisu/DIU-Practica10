@@ -35,10 +35,12 @@ public class pr10t1Frame extends javax.swing.JFrame {
         }
 
         @Override
-        protected void process(List<Integer> lista){
+        protected void process(java.util.List<Integer> lista) {
             int last = lista.size(); 
-            progressBar.setValue(lista.get(last-1).intValue());
+            progressBar.setValue(lista.get(last-1).intValue()); //To change body of generated methods, choose Tools | Templates.
         }
+
+
 
         @Override
         public void done() {
