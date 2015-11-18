@@ -18,63 +18,6 @@ public class pr10t1Frame extends javax.swing.JFrame {
     /**
      * Creates new form pr10t1Frame
      */
-    private class Tarea extends SwingWorker<Void, Integer> { 
-        @Override
-        protected Void doInBackground() {
-            boolean looping = true;
-            Integer cuenta = 0;
-            while(looping && !isCancelled()){
-                try{
-                    Thread.sleep(100);
-                } catch(InterruptedException e){}
-                cuenta ++;
-                publish(cuenta);
-                if(cuenta >= 100) looping = false;
-            }
-            return null;
-        }
-        @Override
-        protected void process(java.util.List<Integer> lista) {
-            int last = lista.size(); 
-            progressBar.setValue(lista.get(last-1).intValue()); //To change body of generated methods, choose Tools | Templates.
-        }
-        @Override
-        public void done() {
-            cancelButton.setEnabled(false); 
-            acceptButton.setEnabled(true); 
-            informationLabel.setText("Tarea Finalizada!"); 
-            progresoDialog.setCursor(null);
-        }
-    }
-// Mock anonimo
-//    SwingWorker madafa = new SwingWorker<Void,Integer>(){
-//        @Override
-//        protected Void doInBackground() {
-//            boolean looping = true;
-//            Integer cuenta = 0;
-//            while(looping && !isCancelled()){
-//                try{
-//                    Thread.sleep(100);
-//                } catch(InterruptedException e){}
-//                cuenta ++;
-//                publish(cuenta);
-//                if(cuenta >= 100) looping = false;
-//            }
-//            return null;
-//        }
-//        @Override
-//        protected void process(java.util.List<Integer> lista) {
-//            int last = lista.size(); 
-//            progressBar.setValue(lista.get(last-1).intValue()); //To cha
-//        }
-//        @Override
-//        public void done() {
-//            cancelButton.setEnabled(false); 
-//            acceptButton.setEnabled(true); 
-//            informationLabel.setText("Tarea Finalizada!"); 
-//            progresoDialog.setCursor(null);
-//        }
-//    };
     
     public pr10t1Frame() {
         initComponents();
@@ -192,7 +135,36 @@ public class pr10t1Frame extends javax.swing.JFrame {
         cancelButton.setEnabled(true); 
         informationLabel.setText("Realizando Tarea...");
         progressBar.setValue(0); 
-        trabajo = new Tarea();
+        trabajo = new SwingWorker<Void,Void>(){
+            @Override
+            protected Void doInBackground() {
+                boolean looping = true;
+                Integer cuenta = 0;
+                while(looping && !isCancelled()){
+                    try{
+                        Thread.sleep(100);
+                    } catch(InterruptedException e){}
+                    cuenta ++;
+                    if(cuenta >= 100) looping = false;
+                    setProgress(cuenta.intValue());
+                    publish();
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(java.util.List<Void> chunks) {
+                progressBar.setValue(getProgress()); 
+            }
+
+            @Override
+            public void done() {
+                cancelButton.setEnabled(false); 
+                acceptButton.setEnabled(true); 
+                informationLabel.setText("Tarea Finalizada!"); 
+                progresoDialog.setCursor(null);
+            }
+        };
         trabajo.execute();
         runButton.setEnabled(false);
     }//GEN-LAST:event_runButtonActionPerformed
@@ -241,7 +213,7 @@ public class pr10t1Frame extends javax.swing.JFrame {
             }
         });
     }
-    private Tarea trabajo;
+    private SwingWorker trabajo;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acceptButton;
     private javax.swing.JLabel authorLabel;
